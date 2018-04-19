@@ -1,0 +1,2 @@
+Main Theme
+  Nexto color: #0e8f9e
