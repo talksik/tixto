@@ -23,10 +23,10 @@ type Props = {};
 export default class Home extends Component<Props> {
   componentDidMount() {
     console.log('mounted');
-    await AsyncStorage.getItem('longitude').then((lon) => {
+    AsyncStorage.getItem('longitude').then((lon) => {
       console.log(lon);
     });
-    await AsyncStorage.getItem('latitude').then((lat) => {
+    AsyncStorage.getItem('latitude').then((lat) => {
       console.log(lat);
     });
   }
