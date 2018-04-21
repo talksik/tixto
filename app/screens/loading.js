@@ -3,8 +3,8 @@
  */
 import React, { Component } from 'react';
 import {
-  View,
   Dimensions,
+  View,
   Image,
   Text,
   AsyncStorage
@@ -26,9 +26,9 @@ export default class Loading extends Component<Props> {
       this.latitude = parseFloat(position.coords.latitude);
       this.longitude = parseFloat(position.coords.longitude);
       console.log(String(this.latitude) + ' ' + String(this.longitude));
-      AsyncStorage.setItem('longitude', this.longitude);
-      AsyncStorage.setItem('latitude', this.latitude);
-      Actions.home();
+      //AsyncStorage.setItem('longitude', this.longitude);
+      //AsyncStorage.setItem('latitude', this.latitude);
+      Actions.main();
       },
       (error) => console.log(error),
       // high accuracy might need slight adjusting with its values
@@ -41,7 +41,7 @@ export default class Loading extends Component<Props> {
   render() {
     return (
       <View style={loadingStyles.container}>
-        <Image style={loadingStyles.gif} source={{ uri: 'http://www.playrosy.com/ourgames/vampiregirlmakeover/images/_preloader.gif' }} />
+        <Image style={loadingStyles.gif} source={{ uri: null }} />
         <Text style={loadingStyles.waitTxt}>Please wait to be connected...</Text>
         <View style={loadingStyles.copyright}>
           <Text style={loadingStyles.copyTxt}>&copy; Nexto</Text>

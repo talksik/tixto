@@ -3,9 +3,9 @@
  */
 import React, { Component } from 'react';
 import {
+  Dimensions,
   View,
   ImageBackground,
-  Dimensions,
   Text,
   TouchableOpacity,
   Permissions,
@@ -21,16 +21,6 @@ const backgroundLink = 'https://cdn.shopify.com/s/files/1/2567/6484/products/Pol
 
 type Props = {};
 export default class Home extends Component<Props> {
-  componentDidMount() {
-    console.log('mounted');
-    AsyncStorage.getItem('longitude').then((lon) => {
-      console.log(lon);
-    });
-    AsyncStorage.getItem('latitude').then((lat) => {
-      console.log(lat);
-    });
-  }
-
   connect() {
     Actions.loading();
   }
