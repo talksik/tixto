@@ -26,4 +26,8 @@ export default class AdSpace extends Component<Props> {
 }
 
 const styles = {
+  container: {
+    flex: 1,
+    backgroundColor: 'black'
+  }
 }
