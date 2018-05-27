@@ -15,6 +15,10 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Fonts } from '../../utils/Fonts.js';
 
+// Socket.io imports
+window.navigator.userAgent = 'react-native';
+import io from 'socket.io-client/dist/socket.io';
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -22,22 +26,54 @@ type Props = {};
 export default class Chat extends Component<Props> {
   constructor(props) {
     super(props);
-    var exMessages = [
-      {
-        id: 1,
-        text: "hey anyone wanna study 61A"
-      },
-      {
-        id: 2,
-        text: "Yea im down"
-      }
-    ];
+    this.userId = 1;
     this.state = {
       messageToSend : '',
-      messagesDOM: exMessages.map(
-        (msg) => <View key={msg.id}><Text>{msg.text}</Text></View>
-        )
+      messagesDOM: [],
+      prevMessageUser: -1
     };
+    this.socket = io('10.0.2.2:3000', {jsonp: false});
+    this.socket.on('message', (msg) => {
+      console.log('New message received: ' + msg);
+      var oldDOM = this.state.messagesDOM;
+      var newMessage = this.createMessage(msg);
+      this.setState({
+        messagesDOM: oldDOM.concat(newMessage),
+        prevMessageUser: msg.userId
+      });
+    });
+  }
+
+  /*componentWillMount() {
+    this.setState({
+      messagesDOM: exMessages.map(
+        (msg) => this.createMessage(msg)
+        )
+    });
+  }*/
+
+  createMessage = (msg) => {
+    console.log(msg.userId);
+    var isUser = msg.userId === this.userId;
+    var contStyle = isUser ? styles.userMsg : styles.otherMsg;
+    var txtContStyle = isUser ? styles.userMsgBox : styles.otherMsgBox;
+    var txtStyle = isUser ? styles.userTxt : null;
+    var avatar = (
+      <View>
+        <Image style={styles.avatar} source={{uri: 'https://images.pexels.com/photos/430207/pexels-photo-430207.jpeg?auto=compress&cs=tinysrgb&h=350'}} />
+      </View>
+    );
+    var avatarAlready = this.state.prevMessageUser == msg.userId;
+    var result = (
+      <View key={msg.id} style={[contStyle, styles.msgCont]}>
+        {isUser || avatarAlready ? null : avatar}
+        <View style={[txtContStyle, styles.msgTxtCont]}>
+          <Text style={[styles.msgText, txtStyle]}>{msg.text}</Text>
+        </View>
+        {isUser && !avatarAlready ? avatar : null}
+      </View>
+    );
+    return result;
   }
 
   messageInput = (text) => {
@@ -52,24 +88,20 @@ export default class Chat extends Component<Props> {
     console.log(this.state.messagesDOM);
     return (
       <View style={styles.container}>
-        <View style={this.state.messagesDOM.length == 0 ?
-          styles.chatField : styles.chatFieldEmpty}>
 
-          {this.state.messagesDOM.length == 0 ?
-            (<View style={styles.emptyMsg}>
+        {this.state.messagesDOM.length == 0 ?
+          <View style={styles.chatFieldEmpty}>
+            <View style={styles.emptyMsg}>
               <Text>No one's talkin around you! Start it up!</Text>
-            </View>)
-            :
-            (<View>
-              {this.state.messagesDOM}
-            </View>)
-          }
-
-        </View>
-        <View style={styles.inputMsgField}>
-          <View style={styles.iconCont}>
-            <Text>cra</Text>
+            </View>
           </View>
+          :
+          <View style={styles.chatField}>
+            {this.state.messagesDOM}
+          </View>
+        }
+
+        <View style={styles.inputMsgField}>
           <View style={styles.inputCont}>
             <TextInput
               style={styles.inputField}
@@ -99,8 +131,7 @@ const styles = {
   chatField: {
     flex: 8,
     flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'center'
+    justifyContent: 'flex-end'
   },
     chatFieldEmpty: {
       flex: 8,
@@ -108,6 +139,43 @@ const styles = {
       justifyContent: 'center',
       alignItems: 'center'
     },
+    msgCont: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      margin: 10
+    },
+      userMsg: {
+        alignSelf: 'flex-end'
+      },
+      otherMsg: {
+        alignSelf: 'flex-start'
+      },
+    avatar: {
+      height: 35,
+      width: 35,
+      borderRadius: 100
+    },
+    msgTxtCont: {
+      margin: 12,
+      padding: 12,
+      borderBottomRightRadius: 15,
+      borderBottomLeftRadius: 15
+    },
+      userMsgBox: {
+        backgroundColor: '#0e8f9e',
+        borderTopLeftRadius: 15
+      },
+      otherMsgBox: {
+        backgroundColor: 'white',
+        borderTopRightRadius: 15
+      },
+    msgText: {
+      fontFamily: Fonts.SunflowerLight,
+      fontSize: 18
+    },
+      userTxt: {
+        color: 'white'
+      },
   inputMsgField: {
     flex: 1,
     flexDirection: 'row',
@@ -123,7 +191,8 @@ const styles = {
   },
   inputCont: {
     flex: 6,
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-end',
+    marginLeft: 10
   },
     inputField : {
       fontSize: 18,
