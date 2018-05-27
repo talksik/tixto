@@ -11,6 +11,8 @@ import {
 import {
   Actions
 } from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Fonts } from '../../utils/Fonts.js';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -21,19 +23,19 @@ export default class Navbar extends Component<Props> {
     return (
       <View style={styles.container}>
         <View style={styles.iconCont}>
-          <Image
-          style={styles.menuIcon}
-          source={require('../../assets/images/menuIcon.png')}
+          <Icon
+            name='menu'
+            style={styles.menuIcon}
           />
         </View>
         <View style={styles.headerTxt}>
-          <Text style={styles.head}>Main Chat</Text>
+          <Text style={styles.head}>Chat</Text>
           <Text style={styles.status}>online</Text>
         </View>
         <View style={styles.iconCont}>
-          <Image
-          style={styles.inboxIcon}
-          source={require('../../assets/images/inboxIcon.jpg')}
+          <Icon
+            name='inbox'
+            style={styles.inboxIcon}
           />
         </View>
       </View>
@@ -54,8 +56,8 @@ const styles = {
     justifyContent: 'center'
   },
   menuIcon: {
-    height: 50,
-    width: 50
+    fontSize: 30,
+    color: 'white'
   },
   headerTxt: {
     flex: 7,
@@ -64,14 +66,16 @@ const styles = {
   },
   head: {
     fontSize: 20,
-    color: 'white'
+    color: 'white',
+    fontFamily: Fonts.Sunflower
   },
   status: {
     fontSize: 13,
-    color: 'white'
+    color: 'white',
+    fontFamily: Fonts.Sunflower
   },
   inboxIcon: {
-    height: 40,
-    width: 40
+    fontSize: 25,
+    color: 'white'
   }
 }

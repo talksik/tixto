@@ -14,10 +14,11 @@ import {
 import {
   Actions
 } from 'react-native-router-flux';
+import { Fonts } from '../utils/Fonts.js';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const backgroundLink = 'https://cdn.shopify.com/s/files/1/2567/6484/products/Polygon_Esprit_geometric_white_and_gold_5.jpg?v=1517325402';
+const backgroundLink = '../assets/images/homeBg.jpg';
 
 type Props = {};
 export default class Home extends Component<Props> {
@@ -28,7 +29,7 @@ export default class Home extends Component<Props> {
   render() {
     return (
       <View style={homeStyles.container}>
-        <ImageBackground style={homeStyles.bg} source={{uri : backgroundLink}} >
+        <ImageBackground style={homeStyles.bg} source={require(backgroundLink)} >
         <View>
           <Text style={homeStyles.logo}>Nexto</Text>
           <Text style={homeStyles.motto}>spontaneous connection</Text>
@@ -60,11 +61,13 @@ const homeStyles = {
     color: 'grey',
     fontSize: 50,
     textAlign: 'center',
-    zIndex: 100
+    zIndex: 100,
+    fontFamily: Fonts.Sunflower
   },
   motto: {
     color: '#0e8f9e',
-    fontSize: 18
+    fontSize: 18,
+    fontFamily: Fonts.Sunflower
   },
   connect: {
     backgroundColor: '#0e8f9e',

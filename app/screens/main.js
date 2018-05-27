@@ -11,6 +11,7 @@ import {
 import {
   Actions
 } from 'react-native-router-flux';
+import { Fonts } from '../utils/Fonts.js';
 
 // imported components for different sections in main component
 import Navbar from './main/navbar.js';
@@ -45,16 +46,16 @@ const styles = {
   container: {
     flex: 18,
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    position: 'relative'
   },
   navbar: {
     flex: 2
   },
   chat: {
-    flex: 15,
-    backgroundColor: 'white'
+    flex: 15
   },
   adspace: {
-    flex: 1
+    flex: 2
   }
 }
