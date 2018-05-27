@@ -7,7 +7,8 @@ import {
   View,
   Text,
   TextInput,
-  Image
+  Image,
+  TouchableOpacity
 } from 'react-native';
 import {
   Actions
@@ -33,24 +34,35 @@ export default class Chat extends Component<Props> {
       prevMessageUser: -1
     };
     this.socket = io('10.0.2.2:3000', {jsonp: false});
-    this.socket.on('message', (msg) => {
-      console.log('New message received: ' + msg);
-      var oldDOM = this.state.messagesDOM;
-      var newMessage = this.createMessage(msg);
-      this.setState({
-        messagesDOM: oldDOM.concat(newMessage),
-        prevMessageUser: msg.userId
+    this.socket.on('initMessages', (allMsg) => {
+      console.log('Initial messages received: ' + allMsg);
+      allMsg.map((msg) => {
+        this.addMessage(msg);
       });
+    });
+
+    this.socket.on('newMessage', (msg) => {
+      this.addMessage(msg);
     });
   }
 
-  /*componentWillMount() {
+  addMessage = (msg) => {
+    console.log('New message received: ' + msg);
+    var oldDOM = this.state.messagesDOM;
+    var newMessage = this.createMessage(msg);
     this.setState({
-      messagesDOM: exMessages.map(
-        (msg) => this.createMessage(msg)
-        )
+      messagesDOM: oldDOM.concat(newMessage),
+      prevMessageUser: msg.userId
     });
-  }*/
+  }
+
+  sendMessage = () => {
+    console.log('Message to send: ' + this.state.messageToSend);
+    this.socket.emit('newMessage', this.state.messageToSend);
+    this.setState({
+      messageToSend: ''
+    });
+  }
 
   createMessage = (msg) => {
     console.log(msg.userId);
@@ -110,10 +122,12 @@ export default class Chat extends Component<Props> {
             />
           </View>
           <View style={styles.iconCont}>
-            <Icon
-              name='send'
-              style={styles.sendIcon}
-            />
+            <TouchableOpacity onPress={this.sendMessage}>
+              <Icon
+                name='send'
+                style={styles.sendIcon}
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </View>

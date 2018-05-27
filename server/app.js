@@ -1,6 +1,14 @@
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'mysql',
+  database: 'nexto'
+});
 
 var port = 3000;
 server.listen(port, () => console.log('serving on port: ' + port));
@@ -23,11 +31,23 @@ var exMessages = [
 ];
 
 io.on('connection', function (socket) {
-  console.log(socket.id);
-  exMessages.map((msg) => {
-    socket.emit('message', msg);
-    console.log('sending msg by msg');
+  console.log('Client connected: ' + socket.id);
+  console.log(socket.handshake.jsonp);
+  
+  con.query('SELECT * FROM messages;', function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+    socket.emit('initMessages', result);
+    console.log('sent all initial messages');
   });
 
-  io.on('test', () => console.log('worked~'));
+  //io.on('test', () => console.log('worked~')); // test with web page
+
+  socket.on('newMessage', function(msg) {
+    io.emit('newMessage', msg);
+  });
+
+  socket.on('disconnect', function() {
+    console.log('Client disconnected: ' + socket.id);
+  });
 });
