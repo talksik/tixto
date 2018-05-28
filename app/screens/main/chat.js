@@ -8,7 +8,8 @@ import {
   Text,
   TextInput,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  AsyncStorage
 } from 'react-native';
 import {
   Actions
@@ -33,6 +34,7 @@ export default class Chat extends Component<Props> {
       messagesDOM: [],
       prevMessageUser: -1
     };
+    this.getValues();
     this.socket = io('10.0.2.2:3000', {jsonp: false});
     this.socket.on('initMessages', (allMsg) => {
       console.log('Initial messages received: ' + allMsg);
@@ -46,10 +48,32 @@ export default class Chat extends Component<Props> {
     });
   }
 
+  getValues = async () => {
+    try {
+      const long = await AsyncStorage.getItem('long');
+      const lat = await AsyncStorage.getItem('lat');
+      this.long = JSON.parse(long);
+      this.lat = JSON.parse(lat);
+      console.log('Retrieved long: ' + this.long);
+      console.log('Retrieved lat: ' + this.lat);
+    } catch (error) {
+      console.log(error);
+      //tell UI that cannot find location
+    }
+  }
+
   addMessage = (msg) => {
     console.log('New message received: ' + msg);
     var oldDOM = this.state.messagesDOM;
     var newMessage = this.createMessage(msg);
+    if (this.state.prevMessageUser != msg.userId) {
+      var dotSeparator = (
+        <View key={-msg.id} style={styles.separatorCont}>
+          <Text>. .</Text>
+        </View>
+      );
+      oldDOM.push(dotSeparator);
+    }
     this.setState({
       messagesDOM: oldDOM.concat(newMessage),
       prevMessageUser: msg.userId
@@ -58,14 +82,16 @@ export default class Chat extends Component<Props> {
 
   sendMessage = () => {
     console.log('Message to send: ' + this.state.messageToSend);
-    this.socket.emit('newMessage', this.state.messageToSend);
+    this.socket.emit('newMessage', {
+      userId: this.userId,
+      text: this.state.messageToSend
+    });
     this.setState({
       messageToSend: ''
     });
   }
 
   createMessage = (msg) => {
-    console.log(msg.userId);
     var isUser = msg.userId === this.userId;
     var contStyle = isUser ? styles.userMsg : styles.otherMsg;
     var txtContStyle = isUser ? styles.userMsgBox : styles.otherMsgBox;
@@ -77,7 +103,8 @@ export default class Chat extends Component<Props> {
     );
     var avatarAlready = this.state.prevMessageUser == msg.userId;
     var result = (
-      <View key={msg.id} style={[contStyle, styles.msgCont]}>
+      <View key={msg.id}
+        style={[contStyle, styles.msgCont, avatarAlready ? styles.avatarAlready : null]}>
         {isUser || avatarAlready ? null : avatar}
         <View style={[txtContStyle, styles.msgTxtCont]}>
           <Text style={[styles.msgText, txtStyle]}>{msg.text}</Text>
@@ -89,15 +116,12 @@ export default class Chat extends Component<Props> {
   }
 
   messageInput = (text) => {
-    console.log('changing state of messageToSend');
     this.setState({
       messageToSend : text
     });
-    console.log(this.state.messageToSend);
   }
 
   render() {
-    console.log(this.state.messagesDOM);
     return (
       <View style={styles.container}>
 
@@ -119,6 +143,7 @@ export default class Chat extends Component<Props> {
               style={styles.inputField}
               placeholder="Type a message..."
               onChangeText={this.messageInput}
+              value={this.state.messageToSend}
             />
           </View>
           <View style={styles.iconCont}>
@@ -155,8 +180,7 @@ const styles = {
     },
     msgCont: {
       flexDirection: 'row',
-      alignItems: 'center',
-      margin: 10
+      alignItems: 'center'
     },
       userMsg: {
         alignSelf: 'flex-end'
@@ -164,13 +188,18 @@ const styles = {
       otherMsg: {
         alignSelf: 'flex-start'
       },
+      avatarAlready: {
+        marginRight: 45,
+        marginLeft: 45
+      },
     avatar: {
       height: 35,
       width: 35,
-      borderRadius: 100
+      borderRadius: 100,
+      margin: 5
     },
     msgTxtCont: {
-      margin: 12,
+      margin: 3,
       padding: 12,
       borderBottomRightRadius: 15,
       borderBottomLeftRadius: 15
@@ -190,6 +219,10 @@ const styles = {
       userTxt: {
         color: 'white'
       },
+    separatorCont: {
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
   inputMsgField: {
     flex: 1,
     flexDirection: 'row',

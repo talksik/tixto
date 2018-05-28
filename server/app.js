@@ -17,26 +17,11 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-var exMessages = [
-  {
-    userId: 10,
-    id: 1,
-    text: "hey anyone wanna study 61A"
-  },
-  {
-    userId: 1, // current user has an id of 1
-    id: 2, // id of message itself
-    text: "Yea im down"
-  }
-];
-
 io.on('connection', function (socket) {
   console.log('Client connected: ' + socket.id);
-  console.log(socket.handshake.jsonp);
-  
-  con.query('SELECT * FROM messages;', function (err, result, fields) {
+
+  con.query('SELECT * FROM messages', function (err, result, fields) {
     if (err) throw err;
-    console.log(result);
     socket.emit('initMessages', result);
     console.log('sent all initial messages');
   });
@@ -44,7 +29,26 @@ io.on('connection', function (socket) {
   //io.on('test', () => console.log('worked~')); // test with web page
 
   socket.on('newMessage', function(msg) {
-    io.emit('newMessage', msg);
+    var sql = "INSERT INTO messages (userId, text, createdAt) VALUES (?, ?, ?)";
+    var currTime = new Date().toString();
+    con.query(sql, [msg.userId, msg.text, currTime], function(err, result) {
+      if (err) throw err;
+      console.log('Message sent to db!');
+
+      var msgId = 0;
+      con.query('SELECT LAST_INSERT_ID()', function(err, result) {
+        if(err) throw err;
+        msgId = result.'LAST_INSERT_ID()';
+        console.log(msgId);
+      });
+      var uploadedMsg = {
+        id: msgId,
+        userId: msg.userId,
+        text: msg.text,
+        createdAt: currTime
+      };
+      io.emit('newMessage', uploadedMsg);
+    });
   });
 
   socket.on('disconnect', function() {

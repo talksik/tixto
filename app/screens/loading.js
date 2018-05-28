@@ -26,8 +26,7 @@ export default class Loading extends Component<Props> {
       this.latitude = parseFloat(position.coords.latitude);
       this.longitude = parseFloat(position.coords.longitude);
       console.log(String(this.latitude) + ' ' + String(this.longitude));
-      //AsyncStorage.setItem('longitude', this.longitude);
-      //AsyncStorage.setItem('latitude', this.latitude);
+      this.storeValues();
       Actions.main();
       },
       (error) => console.log(error),
@@ -36,6 +35,16 @@ export default class Loading extends Component<Props> {
       // regular getPosition
       //{ enableHighAccuracy: false, timeout: 2000, maximumAge: 1000 }
     );
+  }
+
+  storeValues = async () => {
+    try {
+      await AsyncStorage.setItem('long', this.longitude);
+      await AsyncStorage.setItem('lat', this.latitude);
+      console.log('Stored Values!');
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   render() {
