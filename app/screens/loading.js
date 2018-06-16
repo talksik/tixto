@@ -25,7 +25,7 @@ export default class Loading extends Component<Props> {
       console.log('Getting User Location:');
       this.latitude = parseFloat(position.coords.latitude);
       this.longitude = parseFloat(position.coords.longitude);
-      console.log(String(this.latitude) + ' ' + String(this.longitude));
+      console.log(this.latitude.toString() + ' ' + this.longitude.toString());
       this.storeValues();
       Actions.main();
       },
@@ -39,9 +39,11 @@ export default class Loading extends Component<Props> {
 
   storeValues = async () => {
     try {
-      await AsyncStorage.setItem('long', this.longitude);
-      await AsyncStorage.setItem('lat', this.latitude);
-      console.log('Stored Values!');
+      var toStore = [['long', this.longitude.toString()], ['lat', this.latitude.toString()]];
+      await AsyncStorage.multiSet(toStore, () => {
+        console.log('Stored values!');
+        Actions.main();
+      });
     } catch (error) {
       console.log(error);
     }

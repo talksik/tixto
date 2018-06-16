@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Fonts } from '../../utils/Fonts.js';
 
 // Socket.io imports
-window.navigator.userAgent = 'react-native';
+import './UserAgent';
 import io from 'socket.io-client/dist/socket.io';
 
 const windowWidth = Dimensions.get('window').width;
@@ -34,8 +34,34 @@ export default class Chat extends Component<Props> {
       messagesDOM: [],
       prevMessageUser: -1
     };
-    this.getValues();
+    this.getValues(); // from AsyncStorage
+
+  }
+
+  getValues = async () => {
+    try {
+      await AsyncStorage.multiGet(['long', 'lat'], (err, stores) => {
+        stores.map((result, i, store) => {
+          let key = store[i][0];
+          let value = store[i][1];
+          key == 'long' ? this.long = parseFloat(value) : this.lat = parseFloat(value);
+        });
+      });
+      console.log(this.long + ' ' + this.lat);
+    } catch (error) {
+      console.log(error);
+      // tell UI that cannot find location
+    }
+  }
+
+  componentDidMount() {
     this.socket = io('10.0.2.2:3000', {jsonp: false});
+    this.socket.on('connect', () => {
+      var position = {long: this.long, lat: this.lat};
+      console.log(position);
+      this.socket.emit('initial', position);
+    });
+
     this.socket.on('initMessages', (allMsg) => {
       console.log('Initial messages received: ' + allMsg);
       allMsg.map((msg) => {
@@ -46,20 +72,6 @@ export default class Chat extends Component<Props> {
     this.socket.on('newMessage', (msg) => {
       this.addMessage(msg);
     });
-  }
-
-  getValues = async () => {
-    try {
-      const long = await AsyncStorage.getItem('long');
-      const lat = await AsyncStorage.getItem('lat');
-      this.long = JSON.parse(long);
-      this.lat = JSON.parse(lat);
-      console.log('Retrieved long: ' + this.long);
-      console.log('Retrieved lat: ' + this.lat);
-    } catch (error) {
-      console.log(error);
-      //tell UI that cannot find location
-    }
   }
 
   addMessage = (msg) => {
@@ -84,7 +96,9 @@ export default class Chat extends Component<Props> {
     console.log('Message to send: ' + this.state.messageToSend);
     this.socket.emit('newMessage', {
       userId: this.userId,
-      text: this.state.messageToSend
+      text: this.state.messageToSend,
+      lng: this.long,
+      lat: this.lat
     });
     this.setState({
       messageToSend: ''
@@ -121,6 +135,10 @@ export default class Chat extends Component<Props> {
     });
   }
 
+  sendFieldStyle = () => {
+    return this.state.messageToSend == '' ? styles.sendIcon : styles.sendIconColor;
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -150,7 +168,7 @@ export default class Chat extends Component<Props> {
             <TouchableOpacity onPress={this.sendMessage}>
               <Icon
                 name='send'
-                style={styles.sendIcon}
+                style={this.sendFieldStyle()}
               />
             </TouchableOpacity>
           </View>
@@ -229,7 +247,8 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-between',
     height: 50,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    marginTop: 10
   },
   iconCont: {
     flex: 1,
@@ -247,5 +266,9 @@ const styles = {
     },
   sendIcon: {
     fontSize: 25
-  }
+  },
+    sendIconColor: {
+      fontSize: 25,
+      color: '#0e8f9e'
+    }
 }
