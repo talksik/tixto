@@ -34,8 +34,11 @@ export default class Chat extends Component<Props> {
       messagesDOM: [],
       prevMessageUser: -1
     };
+    /**
+    *   todo fix AsyncStorage
+    */
     this.getValues(); // from AsyncStorage
-
+    this.position = this.props.position;
   }
 
   getValues = async () => {
@@ -57,9 +60,7 @@ export default class Chat extends Component<Props> {
   componentDidMount() {
     this.socket = io('10.0.2.2:3000', {jsonp: false});
     this.socket.on('connect', () => {
-      var position = {long: this.long, lat: this.lat};
-      console.log(position);
-      this.socket.emit('initial', position);
+      this.socket.emit('initial', this.position);
     });
 
     this.socket.on('initMessages', (allMsg) => {
@@ -97,8 +98,8 @@ export default class Chat extends Component<Props> {
     this.socket.emit('newMessage', {
       userId: this.userId,
       text: this.state.messageToSend,
-      lng: this.long,
-      lat: this.lat
+      lng: this.position.long,
+      lat: this.position.lat
     });
     this.setState({
       messageToSend: ''

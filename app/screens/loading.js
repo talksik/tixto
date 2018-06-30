@@ -26,8 +26,11 @@ export default class Loading extends Component<Props> {
       this.latitude = parseFloat(position.coords.latitude);
       this.longitude = parseFloat(position.coords.longitude);
       console.log(this.latitude.toString() + ' ' + this.longitude.toString());
+      /**
+      *   todo fix AsyncStorage
+      */
       this.storeValues();
-      Actions.main();
+      Actions.main({long: this.longitude.toString(), lat: this.latitude.toString()});
       },
       (error) => console.log(error),
       // high accuracy might need slight adjusting with its values
