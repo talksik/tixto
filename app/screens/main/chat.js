@@ -16,9 +16,11 @@ import {
 } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Fonts } from '../../utils/Fonts.js';
+require('react-native');
 
 // Socket.io imports
 import './UserAgent';
+window.navigator.userAgent = "react-native";
 import io from 'socket.io-client/dist/socket.io';
 
 const windowWidth = Dimensions.get('window').width;
@@ -32,34 +34,19 @@ export default class Chat extends Component<Props> {
     this.state = {
       messageToSend : '',
       messagesDOM: [],
-      prevMessageUser: -1
+      prevMessageUser: -1,
+      messages: [(<View key={0}><Text>adf</Text></View>), (<View key={1}><Text>second</Text></View>)]
     };
     /**
     *   todo fix AsyncStorage
     */
-    this.getValues(); // from AsyncStorage
     this.position = this.props.position;
   }
 
-  getValues = async () => {
-    try {
-      await AsyncStorage.multiGet(['long', 'lat'], (err, stores) => {
-        stores.map((result, i, store) => {
-          let key = store[i][0];
-          let value = store[i][1];
-          key == 'long' ? this.long = parseFloat(value) : this.lat = parseFloat(value);
-        });
-      });
-      console.log(this.long + ' ' + this.lat);
-    } catch (error) {
-      console.log(error);
-      // tell UI that cannot find location
-    }
-  }
-
-  componentDidMount() {
+  componentWillMount() {
     this.socket = io('10.0.2.2:3000', {jsonp: false});
     this.socket.on('connect', () => {
+      console.log('again');
       this.socket.emit('initial', this.position);
     });
 
@@ -76,9 +63,11 @@ export default class Chat extends Component<Props> {
   }
 
   addMessage = (msg) => {
-    console.log('New message received: ' + msg);
+    console.log('New message received: ');
+    console.log(msg);
     var oldDOM = this.state.messagesDOM;
     var newMessage = this.createMessage(msg);
+    oldDOM.push(newMessage);
     if (this.state.prevMessageUser != msg.userId) {
       var dotSeparator = (
         <View key={-msg.id} style={styles.separatorCont}>
@@ -88,7 +77,7 @@ export default class Chat extends Component<Props> {
       oldDOM.push(dotSeparator);
     }
     this.setState({
-      messagesDOM: oldDOM.concat(newMessage),
+      messagesDOM: oldDOM,
       prevMessageUser: msg.userId
     });
   }
@@ -127,6 +116,7 @@ export default class Chat extends Component<Props> {
         {isUser && !avatarAlready ? avatar : null}
       </View>
     );
+    console.log(result);
     return result;
   }
 
@@ -141,19 +131,21 @@ export default class Chat extends Component<Props> {
   }
 
   render() {
+    console.log('rrendering');
+    console.log(this.state.messagesDOM);
     return (
       <View style={styles.container}>
 
         {this.state.messagesDOM.length == 0 ?
-          <View style={styles.chatFieldEmpty}>
+          (<View style={styles.chatFieldEmpty}>
             <View style={styles.emptyMsg}>
               <Text>No one's talkin around you! Start it up!</Text>
             </View>
-          </View>
+          </View>)
           :
-          <View style={styles.chatField}>
+          (<View style={styles.chatField}>
             {this.state.messagesDOM}
-          </View>
+          </View>)
         }
 
         <View style={styles.inputMsgField}>

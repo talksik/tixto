@@ -13,8 +13,9 @@ import {
 } from 'react-native-router-flux';
 import { Fonts } from '../utils/Fonts.js';
 
+import { Drawer } from 'native-base';
+
 // imported components for different sections in main component
-imoprt Dash from './main/dashboard.js';
 import Navbar from './main/navbar.js';
 import Chat from './main/chat.js';
 import AdSpace from './main/adspace.js';
@@ -34,11 +35,16 @@ export default class Main extends Component<Props> {
 
   render() {
     console.log('in Main');
+
+    closeDrawer = () => {
+      this.drawer._root.close()
+    };
+    openDrawer = () => {
+      this.drawer._root.open()
+    };
+
     return (
       <View style={styles.container}>
-        <View style={styles.dashboard}>
-          <Dash />
-        </View>
         <View style={styles.navbar}>
           <Navbar />
         </View>
@@ -59,11 +65,6 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-between',
     position: 'relative'
-  },
-  dashboard: {
-    height: windowHeight,
-    width: windowWidth - 60,
-    backgroundColor: '#595a5b'
   },
   navbar: {
     flex: 2
