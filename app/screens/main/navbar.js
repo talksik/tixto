@@ -33,10 +33,7 @@ export default class Navbar extends Component<Props> {
           <Text style={styles.status}>online</Text>
         </View>
         <View style={styles.iconCont}>
-          <Icon
-            name='inbox'
-            style={styles.inboxIcon}
-          />
+          <Image source={require('../../assets/images/patterns/1.jpg')} style={styles.avatar} />
         </View>
       </View>
     );
@@ -74,8 +71,9 @@ const styles = {
     color: 'white',
     fontFamily: Fonts.Sunflower
   },
-  inboxIcon: {
-    fontSize: 25,
-    color: 'white'
+  avatar: {
+    height: 30,
+    width: 30,
+    borderRadius: 100
   }
 }

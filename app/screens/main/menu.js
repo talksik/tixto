@@ -6,34 +6,47 @@ import {
   Dimensions,
   View,
   Text,
-  Image
+  ImageBackground
 } from 'react-native';
 import {
   Actions
 } from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const remote = 'http://www.frugalsoft.com/images/nice-cute-wallpaper-designs-cute-iphone-wallpaper-patterns';
+const backgroundLink = '../../assets/images/homeBg.jpg';
 
 type Props = {};
 export default class Menu extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text>Arjun Patel</Text>
-        </View>
+        <ImageBackground style={styles.header} source={require(backgroundLink)} >
+          <Text style={styles.hdrTxt}>Menu</Text>
+        </ImageBackground>
         <View style={styles.main}>
           <View style={styles.option}>
-            <Text>Refresh Connection</Text>
+            <Text style={styles.optTxt}>Refresh Connection</Text>
+            <Icon
+              name='track-changes'
+              style={styles.icons}
+            />
           </View>
           <View style={styles.option}>
-            <Text>Change Avatar</Text>
+            <Text style={styles.optTxt}>Change Avatar</Text>
+            <Icon
+              name='refresh'
+              style={styles.icons}
+            />
           </View>
           <View style={styles.option}>
-            <Text>Disconnect</Text>
+            <Text style={styles.optTxt}>Disconnect</Text>
+            <Icon
+              name='exit-to-app'
+              style={styles.icons}
+            />
           </View>
         </View>
       </View>
@@ -43,26 +56,40 @@ export default class Menu extends Component<Props> {
 
 const styles = {
   container: {
-    flex: 4,
+    flex: 13,
     backgroundColor: 'white'
   },
   header: {
-    flex: 1,
+    flex: 3,
     backgroundColor: 'grey',
     justifyContent: 'center',
     alignItems: 'center'
   },
+    hdrTxt: {
+      color: '#0e8f9e',
+      fontSize: 30
+    },
   main: {
-    flex: 3,
+    flex: 10,
     flexDirection: 'column',
     justifyContent: 'flex-start'
   },
   option: {
-    height: 10,
-    paddingTop: 20,
-    paddingBottom: 20,
+    flex: 0,
+    flexBasis: 3,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 30,
     borderWidth: 2,
     borderStyle: 'solid',
     borderColor: '#d7d9dd'
-  }
+  },
+    icons: {
+      fontSize: 30,
+      color: '#0e8f9e'
+    },
+    optTxt: {
+      fontSize: 20
+    }
 }
