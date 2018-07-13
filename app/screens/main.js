@@ -6,7 +6,8 @@ import React, { Component } from 'react';
 import {
   Dimensions,
   View,
-  Text
+  Text,
+  DrawerLayoutAndroid
 } from 'react-native';
 import {
   Actions
@@ -14,6 +15,7 @@ import {
 import { Fonts } from '../utils/Fonts.js';
 
 import { Drawer } from 'native-base';
+import Menu from './main/menu.js';
 
 // imported components for different sections in main component
 import Navbar from './main/navbar.js';
@@ -33,28 +35,32 @@ export default class Main extends Component<Props> {
     };
   }
 
+  closeDrawer = () => {
+    this.drawer._root.close();
+  };
+  openDrawer = () => {
+    this.drawer._root.open();
+  };
+
   render() {
     console.log('in Main');
-
-    closeDrawer = () => {
-      this.drawer._root.close()
-    };
-    openDrawer = () => {
-      this.drawer._root.open()
-    };
-
     return (
-      <View style={styles.container}>
-        <View style={styles.navbar}>
-          <Navbar />
+      <DrawerLayoutAndroid
+        drawerWidth={300}
+        drawerPosition={DrawerLayoutAndroid.positions.Left}
+        renderNavigationView={() => <Menu />}>
+        <View style={styles.container}>
+          <View style={styles.navbar}>
+            <Navbar />
+          </View>
+          <View style={styles.chat}>
+            <Chat position={this.position} />
+          </View>
+          <View style={styles.adspace}>
+            <AdSpace />
+          </View>
         </View>
-        <View style={styles.chat}>
-          <Chat position={this.position} />
-        </View>
-        <View style={styles.adspace}>
-          <AdSpace />
-        </View>
-      </View>
+      </DrawerLayoutAndroid>
     );
   }
 }

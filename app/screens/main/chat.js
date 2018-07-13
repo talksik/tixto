@@ -21,7 +21,7 @@ require('react-native');
 // Socket.io imports
 import './UserAgent';
 window.navigator.userAgent = "react-native";
-import io from 'socket.io-client/dist/socket.io';
+const io = require('socket.io-client/dist/socket.io');
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -43,7 +43,7 @@ export default class Chat extends Component<Props> {
     this.position = this.props.position;
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.socket = io('10.0.2.2:3000', {jsonp: false});
     this.socket.on('connect', () => {
       console.log('again');
@@ -64,7 +64,6 @@ export default class Chat extends Component<Props> {
 
   addMessage = (msg) => {
     console.log('New message received: ');
-    console.log(msg);
     var oldDOM = this.state.messagesDOM;
     var newMessage = this.createMessage(msg);
     oldDOM.push(newMessage);
@@ -131,8 +130,6 @@ export default class Chat extends Component<Props> {
   }
 
   render() {
-    console.log('rrendering');
-    console.log(this.state.messagesDOM);
     return (
       <View style={styles.container}>
 
