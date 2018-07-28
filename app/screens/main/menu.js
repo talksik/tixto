@@ -1,12 +1,13 @@
 /*
- * AdSpace component within Main
+ * Menu with few options
  */
 import React, { Component } from 'react';
 import {
   Dimensions,
   View,
   Text,
-  ImageBackground
+  ImageBackground,
+  TouchableOpacity
 } from 'react-native';
 import {
   Actions
@@ -27,27 +28,33 @@ export default class Menu extends Component<Props> {
           <Text style={styles.hdrTxt}>Menu</Text>
         </ImageBackground>
         <View style={styles.main}>
-          <View style={styles.option}>
-            <Text style={styles.optTxt}>Refresh Connection</Text>
-            <Icon
-              name='track-changes'
-              style={styles.icons}
-            />
-          </View>
-          <View style={styles.option}>
-            <Text style={styles.optTxt}>Change Avatar</Text>
-            <Icon
-              name='refresh'
-              style={styles.icons}
-            />
-          </View>
-          <View style={styles.option}>
-            <Text style={styles.optTxt}>Disconnect</Text>
-            <Icon
-              name='exit-to-app'
-              style={styles.icons}
-            />
-          </View>
+          <TouchableOpacity>
+            <View style={styles.option}>
+              <Text style={styles.optTxt}>Refresh Connection</Text>
+              <Icon
+                name='track-changes'
+                style={styles.icons}
+              />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <View style={styles.option}>
+              <Text style={styles.optTxt}>Change Avatar</Text>
+              <Icon
+                name='refresh'
+                style={styles.icons}
+              />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <View style={styles.option}>
+              <Text style={styles.optTxt}>Disconnect</Text>
+              <Icon
+                name='exit-to-app'
+                style={styles.icons}
+              />
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     );

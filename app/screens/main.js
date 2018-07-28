@@ -25,25 +25,46 @@ import AdSpace from './main/adspace.js';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
+const allAvatarLinks = ['https://images.pexels.com/photos/430207/pexels-photo-430207.jpeg?auto=compress&cs=tinysrgb&h=350', 'https://www.graphicpear.com/wp-content/uploads/2017/05/aaa.jpg', 'https://i.pinimg.com/736x/1f/12/87/1f1287b54f9d0c8f5c5fe86d27c95bbb--blue-patterns-indoor-outdoor-rugs.jpg'];
+
 type Props = {};
 export default class Main extends Component<Props> {
   constructor(props) {
     super(props);
-    this.position = {
-      long: this.props.long,
-      lat: this.props.lat
-    };
+
+    var avatarRandom = Math.floor(Math.random() * allAvatarLinks.length);
+
+    this.state = {
+      position: {
+        long: props.long,
+        lat: props.lat
+      },
+      avatar: avatarRandom
+    }
   }
 
-  closeDrawer = () => {
-    this.drawer._root.close();
-  };
-  openDrawer = () => {
-    this.drawer._root.open();
-  };
+  refreshConnection = () => {
+
+  }
+
+  disconnect = () => {
+    Actions.home();
+  }
+
+  refreshAvatar = () => {
+    var newAvatar = (this.state.avatar + 1) % allAvatarLinks.length;
+    this.setState({
+      avatar: newAvatar
+    });
+  }
 
   render() {
     console.log('in Main');
+    const { position, avatar } = this.state;
+    const avatarLink = allAvatarLinks[avatar];
+
+    console.log(position);
+
     return (
       <DrawerLayoutAndroid
         drawerWidth={300}
@@ -51,10 +72,10 @@ export default class Main extends Component<Props> {
         renderNavigationView={() => <Menu />}>
         <View style={styles.container}>
           <View style={styles.navbar}>
-            <Navbar />
+            <Navbar avatar={avatarLink} />
           </View>
           <View style={styles.chat}>
-            <Chat position={this.position} />
+            <Chat position={position} avatar={avatarLink} />
           </View>
           <View style={styles.adspace}>
             <AdSpace />

@@ -30,24 +30,36 @@ type Props = {};
 export default class Chat extends Component<Props> {
   constructor(props) {
     super(props);
-    this.userId = 1;
+
     this.state = {
       messageToSend : '',
       messagesDOM: [],
-      prevMessageUser: -1,
-      messages: [(<View key={0}><Text>adf</Text></View>), (<View key={1}><Text>second</Text></View>)]
+      prevMessageUser: null,
+      userId: null,
+
     };
     /**
     *   todo fix AsyncStorage
     */
-    this.position = this.props.position;
+
+    console.log(props);
   }
 
   componentDidMount() {
-    this.socket = io('10.0.2.2:3000', {jsonp: false});
+    this.socket = io('https://murmuring-sierra-86040.herokuapp.com', {jsonp: false});
     this.socket.on('connect', () => {
-      console.log('again');
-      this.socket.emit('initial', this.position);
+      this.socket.emit('initial', this.props.position);
+
+      fetch('https://murmuring-sierra-86040.herokuapp.com/userid')
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson);
+          this.setState({userId: responseJson.userId});
+        })
+        .catch((error) => {
+          console.log(error);
+          this.setState({userId: 1}); // TODO: error popup
+        });
     });
 
     this.socket.on('initMessages', (allMsg) => {
@@ -66,15 +78,15 @@ export default class Chat extends Component<Props> {
     console.log('New message received: ');
     var oldDOM = this.state.messagesDOM;
     var newMessage = this.createMessage(msg);
-    oldDOM.push(newMessage);
-    if (this.state.prevMessageUser != msg.userId) {
+    if (this.state.prevMessageUser != msg.userId && this.state.prevMessageUser) {
       var dotSeparator = (
-        <View key={-msg.id} style={styles.separatorCont}>
+        <View key={msg.text} style={styles.separatorCont}>
           <Text>. .</Text>
         </View>
       );
       oldDOM.push(dotSeparator);
     }
+    oldDOM.push(newMessage);
     this.setState({
       messagesDOM: oldDOM,
       prevMessageUser: msg.userId
@@ -82,12 +94,14 @@ export default class Chat extends Component<Props> {
   }
 
   sendMessage = () => {
+    console.log(this.state.userId);
     console.log('Message to send: ' + this.state.messageToSend);
     this.socket.emit('newMessage', {
-      userId: this.userId,
+      userId: this.state.userId,
       text: this.state.messageToSend,
-      lng: this.position.long,
-      lat: this.position.lat
+      lng: this.props.position.long,
+      lat: this.props.position.lat,
+      avatar: this.props.avatar
     });
     this.setState({
       messageToSend: ''
@@ -95,27 +109,27 @@ export default class Chat extends Component<Props> {
   }
 
   createMessage = (msg) => {
-    var isUser = msg.userId === this.userId;
+    var isUser = msg.userId == this.state.userId;
     var contStyle = isUser ? styles.userMsg : styles.otherMsg;
     var txtContStyle = isUser ? styles.userMsgBox : styles.otherMsgBox;
     var txtStyle = isUser ? styles.userTxt : null;
+    var avatarLink = msg.avatar;
     var avatar = (
       <View>
-        <Image style={styles.avatar} source={{uri: 'https://images.pexels.com/photos/430207/pexels-photo-430207.jpeg?auto=compress&cs=tinysrgb&h=350'}} />
+        <Image style={styles.avatar} source={{uri: avatarLink}} />
       </View>
     );
     var avatarAlready = this.state.prevMessageUser == msg.userId;
     var result = (
       <View key={msg.id}
         style={[contStyle, styles.msgCont, avatarAlready ? styles.avatarAlready : null]}>
-        {isUser || avatarAlready ? null : avatar}
+        {!isUser && !avatarAlready ? avatar : null}
         <View style={[txtContStyle, styles.msgTxtCont]}>
           <Text style={[styles.msgText, txtStyle]}>{msg.text}</Text>
         </View>
         {isUser && !avatarAlready ? avatar : null}
       </View>
     );
-    console.log(result);
     return result;
   }
 

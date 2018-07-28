@@ -29,7 +29,7 @@ export default class Loading extends Component<Props> {
       /**
       *   todo fix AsyncStorage
       */
-      this.storeValues();
+      //this.storeValues();
       Actions.main({long: this.longitude.toString(), lat: this.latitude.toString()});
       },
       (error) => console.log(error),

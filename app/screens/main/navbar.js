@@ -19,7 +19,13 @@ const windowHeight = Dimensions.get('window').height;
 
 type Props = {};
 export default class Navbar extends Component<Props> {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
+    const { avatar } = this.props;
+
     return (
       <View style={styles.container}>
         <View style={styles.iconCont}>
@@ -33,7 +39,7 @@ export default class Navbar extends Component<Props> {
           <Text style={styles.status}>online</Text>
         </View>
         <View style={styles.iconCont}>
-          <Image source={require('../../assets/images/patterns/1.jpg')} style={styles.avatar} />
+          <Image style={styles.avatar} source={{uri: avatar}} />
         </View>
       </View>
     );
