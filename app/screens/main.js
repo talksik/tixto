@@ -69,7 +69,9 @@ export default class Main extends Component<Props> {
       <DrawerLayoutAndroid
         drawerWidth={300}
         drawerPosition={DrawerLayoutAndroid.positions.Left}
-        renderNavigationView={() => <Menu />}>
+        renderNavigationView={() => <Menu  refreshConnection={this.refreshConnection}
+                                          refreshAvatar={this.refreshAvatar}
+                                          disconnect={this.disconnect} />}>
         <View style={styles.container}>
           <View style={styles.navbar}>
             <Navbar avatar={avatarLink} />
@@ -100,6 +102,6 @@ const styles = {
     flex: 15
   },
   adspace: {
-    flex: 2
+    flex: 0
   }
 }

@@ -22,13 +22,14 @@ const backgroundLink = '../../assets/images/homeBg.jpg';
 type Props = {};
 export default class Menu extends Component<Props> {
   render() {
+    const { refreshConnection, refreshAvatar, disconnect } = this.props;
     return (
       <View style={styles.container}>
         <ImageBackground style={styles.header} source={require(backgroundLink)} >
           <Text style={styles.hdrTxt}>Menu</Text>
         </ImageBackground>
         <View style={styles.main}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={refreshConnection}>
             <View style={styles.option}>
               <Text style={styles.optTxt}>Refresh Connection</Text>
               <Icon
@@ -37,7 +38,7 @@ export default class Menu extends Component<Props> {
               />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={refreshAvatar}>
             <View style={styles.option}>
               <Text style={styles.optTxt}>Change Avatar</Text>
               <Icon
@@ -46,7 +47,7 @@ export default class Menu extends Component<Props> {
               />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={disconnect}>
             <View style={styles.option}>
               <Text style={styles.optTxt}>Disconnect</Text>
               <Icon

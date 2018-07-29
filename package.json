@@ -1,6 +1,8 @@
 {
   "name": "Nexto",
-  "version": "0.0.1",
+  "version": "1.0.1",
+  "description": "Spontaneous connection with peers whether in a library, classroom, or coffee shop.",
+  "author": "Arjun Patel",
   "private": true,
   "rnpm": {
     "assets": [

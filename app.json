@@ -1,4 +1,7 @@
 {
   "name": "Nexto",
-  "displayName": "Nexto"
+  "displayName": "Nexto",
+  "android": {
+    "package": "com.nexto.nexto"
+  }
 }
