@@ -46,20 +46,14 @@ export default class Chat extends Component<Props> {
   }
 
   componentDidMount() {
-    this.socket = io('https://murmuring-sierra-86040.herokuapp.com', {jsonp: false});
+    this.socket = io('http://10.0.2.2:3000', {jsonp: false});
     this.socket.on('connect', () => {
-      this.socket.emit('initial', this.props.position);
+      this.socket.emit('initial', {position: this.props.position, avatar: this.props.avatar});
+    });
 
-      fetch('https://murmuring-sierra-86040.herokuapp.com/userid')
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log(responseJson);
-          this.setState({userId: responseJson.userId});
-        })
-        .catch((error) => {
-          console.log(error);
-          this.setState({userId: 1}); // TODO: error popup
-        });
+    this.socket.on("userId", (obj) => {
+      console.log("User Id assigned: " + obj.userId);
+      this.setState({userId: obj.userId});
     });
 
     this.socket.on('initMessages', (allMsg) => {
@@ -77,8 +71,10 @@ export default class Chat extends Component<Props> {
   addMessage = (msg) => {
     console.log('New message received: ');
     var oldDOM = this.state.messagesDOM;
+
     var newMessage = this.createMessage(msg);
-    if (this.state.prevMessageUser != msg.userId && this.state.prevMessageUser) {
+
+    if (this.state.prevMessageUser != msg.user_id && this.state.prevMessageUser) {
       var dotSeparator = (
         <View key={msg.text} style={styles.separatorCont}>
           <Text>. .</Text>
@@ -86,30 +82,34 @@ export default class Chat extends Component<Props> {
       );
       oldDOM.push(dotSeparator);
     }
+
     oldDOM.push(newMessage);
+
     this.setState({
       messagesDOM: oldDOM,
-      prevMessageUser: msg.userId
+      prevMessageUser: msg.user_id
     });
   }
 
   sendMessage = () => {
     console.log(this.state.userId);
     console.log('Message to send: ' + this.state.messageToSend);
+
     this.socket.emit('newMessage', {
-      userId: this.state.userId,
+      user_id: this.state.userId,
       text: this.state.messageToSend,
-      lng: this.props.position.long,
+      long: this.props.position.long,
       lat: this.props.position.lat,
       avatar: this.props.avatar
     });
+
     this.setState({
       messageToSend: ''
     });
   }
 
   createMessage = (msg) => {
-    var isUser = msg.userId == this.state.userId;
+    var isUser = msg.user_id == this.state.userId;
     var contStyle = isUser ? styles.userMsg : styles.otherMsg;
     var txtContStyle = isUser ? styles.userMsgBox : styles.otherMsgBox;
     var txtStyle = isUser ? styles.userTxt : null;
@@ -119,7 +119,7 @@ export default class Chat extends Component<Props> {
         <Image style={styles.avatar} source={{uri: avatarLink}} />
       </View>
     );
-    var avatarAlready = this.state.prevMessageUser == msg.userId;
+    var avatarAlready = this.state.prevMessageUser == msg.user_id;
     var result = (
       <View key={msg.id}
         style={[contStyle, styles.msgCont, avatarAlready ? styles.avatarAlready : null]}>
@@ -202,7 +202,8 @@ const styles = {
     },
     msgCont: {
       flexDirection: 'row',
-      alignItems: 'center'
+      alignItems: 'center',
+      margin: 2
     },
       userMsg: {
         alignSelf: 'flex-end'
@@ -221,7 +222,8 @@ const styles = {
       margin: 5
     },
     msgTxtCont: {
-      margin: 3,
+      width: 0,
+        flex: 1,
       padding: 12,
       borderBottomRightRadius: 15,
       borderBottomLeftRadius: 15
