@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import {
   Dimensions,
+  ScrollView,
   View,
   Text,
   TextInput,
@@ -154,9 +155,9 @@ export default class Chat extends Component<Props> {
             </View>
           </View>)
           :
-          (<View style={styles.chatField}>
+          (<ScrollView style={styles.chatField}>
             {this.state.messagesDOM}
-          </View>)
+          </ScrollView>)
         }
 
         <View style={styles.inputMsgField}>
@@ -202,8 +203,8 @@ const styles = {
     },
     msgCont: {
       flexDirection: 'row',
-      alignItems: 'center',
-      margin: 2
+      alignSelf: 'stretch',
+      padding: 5
     },
       userMsg: {
         alignSelf: 'flex-end'
@@ -222,19 +223,22 @@ const styles = {
       margin: 5
     },
     msgTxtCont: {
-      width: 0,
-        flex: 1,
-      padding: 12,
-      borderBottomRightRadius: 15,
-      borderBottomLeftRadius: 15
+      maxWidth: windowWidth - 100,
+      padding: 10,
+      borderBottomRightRadius: 10,
+      borderBottomLeftRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.8,
+      shadowRadius: 2,
     },
       userMsgBox: {
         backgroundColor: '#0e8f9e',
-        borderTopLeftRadius: 15
+        borderTopLeftRadius: 10
       },
       otherMsgBox: {
         backgroundColor: 'white',
-        borderTopRightRadius: 15
+        borderTopRightRadius: 10
       },
     msgText: {
       fontFamily: Fonts.SunflowerLight,
