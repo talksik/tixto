@@ -180,6 +180,7 @@ export default class Chat extends Component<Props> {
               multiline = {true}
               numberOfLines = {4}
               maxLength = {220}
+              underlineColorAndroid='rgba(0,0,0,0)'
             />
           </View>
           <View style={styles.iconCont}>
@@ -242,14 +243,14 @@ const styles = {
       padding: 10,
       borderBottomRightRadius: 10,
       borderBottomLeftRadius: 10,
-      shadowColor:'black',
+      shadowColor: 'black',
       shadowOffset: {
         width: 0,
         height: 3
       },
       shadowRadius: 5,
       shadowOpacity: 1.0,
-      elevation: 5
+      elevation: 3
     },
       userMsgBox: {
         backgroundColor: '#0e8f9e',
@@ -273,29 +274,37 @@ const styles = {
   inputMsgField: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 50,
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    margin: 12,
     backgroundColor: 'white',
-    marginTop: 10
-  },
-  iconCont: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
+    shadowColor: '#0e8f9e',
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowRadius: 5,
+    shadowOpacity: 1.0,
+    elevation: 5,
+    padding: 2
   },
   inputCont: {
-    flex: 6,
-    alignSelf: 'flex-end',
-    marginLeft: 10
+    flex: 6
   },
     inputField : {
       fontSize: 18,
       fontFamily: Fonts.SunflowerLight
     },
-  sendIcon: {
-    fontSize: 25
+  iconCont: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderLeftColor: '#0e8f9e',
+    borderLeftWidth: 1
   },
+    sendIcon: {
+      fontSize: 15
+    },
     sendIconColor: {
       fontSize: 25,
       color: '#0e8f9e'

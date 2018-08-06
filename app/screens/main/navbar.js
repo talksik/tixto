@@ -6,7 +6,8 @@ import {
   Dimensions,
   View,
   Text,
-  Image
+  Image,
+  TouchableOpacity
 } from 'react-native';
 import {
   Actions
@@ -24,20 +25,24 @@ export default class Navbar extends Component<Props> {
   }
 
   render() {
-    const { avatar } = this.props;
+    const { openDrawer, avatar } = this.props;
 
     return (
       <View style={styles.container}>
         <View style={styles.iconCont}>
-          <Icon
-            name='menu'
-            style={styles.menuIcon}
-          />
+          <TouchableOpacity onPress={openDrawer}>
+            <Icon
+              name='menu'
+              style={styles.menuIcon}
+            />
+          </TouchableOpacity>
         </View>
+
         <View style={styles.headerTxt}>
           <Text style={styles.head}>Chat</Text>
           <Text style={styles.status}>online</Text>
         </View>
+
         <View style={styles.iconCont}>
           <Image style={styles.avatar} source={{uri: avatar}} />
         </View>

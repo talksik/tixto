@@ -58,8 +58,13 @@ export default class Main extends Component<Props> {
     });
   }
 
+  openDrawer = () => {
+    this.refs['menu'].openDrawer();
+  }
+
   render() {
     console.log('in Main');
+
     const { position, avatar } = this.state;
     const avatarLink = allAvatarLinks[avatar];
 
@@ -67,18 +72,22 @@ export default class Main extends Component<Props> {
 
     return (
       <DrawerLayoutAndroid
+        ref="menu"
         drawerWidth={300}
         drawerPosition={DrawerLayoutAndroid.positions.Left}
-        renderNavigationView={() => <Menu  refreshConnection={this.refreshConnection}
+        renderNavigationView={() => <Menu refreshConnection={this.refreshConnection}
                                           refreshAvatar={this.refreshAvatar}
-                                          disconnect={this.disconnect} />}>
+                                          disconnect={this.disconnect}
+                                          avatar={avatarLink} />}>
         <View style={styles.container}>
           <View style={styles.navbar}>
-            <Navbar avatar={avatarLink} />
+            <Navbar openDrawer={this.openDrawer} avatar={avatarLink} />
           </View>
+
           <View style={styles.chat}>
             <Chat position={position} avatar={avatarLink} />
           </View>
+
           <View style={styles.adspace}>
             <AdSpace />
           </View>
