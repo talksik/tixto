@@ -77,7 +77,7 @@ export default class Chat extends Component<Props> {
 
     if (this.state.prevMessageUser != msg.user_id && this.state.prevMessageUser) {
       var dotSeparator = (
-        <View key={msg.text} style={styles.separatorCont}>
+        <View key={msg.created} style={styles.separatorCont}>
           <Text>. .</Text>
         </View>
       );
@@ -155,9 +155,19 @@ export default class Chat extends Component<Props> {
             </View>
           </View>)
           :
-          (<ScrollView style={styles.chatField}>
-            {this.state.messagesDOM}
-          </ScrollView>)
+          (
+          <View style={styles.chatField}>
+            <ScrollView
+              ref={ref => this.scrollView = ref}
+              onContentSizeChange={(contentWidth, contentHeight) => {
+                  this.scrollView.scrollToEnd({animated: true});
+              }}
+              scrollEnabled={true}
+              contentContainerStyle={styles.chatFieldScroll}>
+              {this.state.messagesDOM}
+            </ScrollView>
+          </View>
+          )
         }
 
         <View style={styles.inputMsgField}>
@@ -167,6 +177,9 @@ export default class Chat extends Component<Props> {
               placeholder="Type a message..."
               onChangeText={this.messageInput}
               value={this.state.messageToSend}
+              multiline = {true}
+              numberOfLines = {4}
+              maxLength = {220}
             />
           </View>
           <View style={styles.iconCont}>
@@ -191,8 +204,10 @@ const styles = {
     backgroundColor: '#e8ebef'
   },
   chatField: {
-    flex: 8,
-    flexDirection: 'column',
+    flex: 8
+  },
+  chatFieldScroll: {
+    flexGrow: 1,
     justifyContent: 'flex-end'
   },
     chatFieldEmpty: {
@@ -207,10 +222,10 @@ const styles = {
       padding: 5
     },
       userMsg: {
-        alignSelf: 'flex-end'
+        justifyContent: 'flex-end'
       },
       otherMsg: {
-        alignSelf: 'flex-start'
+        justifyContent: 'flex-start'
       },
       avatarAlready: {
         marginRight: 45,
@@ -227,10 +242,14 @@ const styles = {
       padding: 10,
       borderBottomRightRadius: 10,
       borderBottomLeftRadius: 10,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.8,
-      shadowRadius: 2,
+      shadowColor:'black',
+      shadowOffset: {
+        width: 0,
+        height: 3
+      },
+      shadowRadius: 5,
+      shadowOpacity: 1.0,
+      elevation: 5
     },
       userMsgBox: {
         backgroundColor: '#0e8f9e',
