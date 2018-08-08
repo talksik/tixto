@@ -21,6 +21,8 @@ require('react-native');
 
 // Socket.io imports
 import './UserAgent';
+import TwitterLocal from './apis/twitter.js';
+
 window.navigator.userAgent = "react-native";
 const io = require('socket.io-client/dist/socket.io');
 
@@ -48,28 +50,28 @@ export default class Chat extends Component<Props> {
     console.log(props);
   }
 
-  // componentDidMount() {
-  //   this.socket = io('http://10.0.2.2:3000', {jsonp: false});
-  //   this.socket.on('connect', () => {
-  //     this.socket.emit('initial', {position: this.props.position, avatar: this.props.avatar});
-  //   });
-  //
-  //   this.socket.on("userId", (obj) => {
-  //     console.log("User Id assigned: " + obj.userId);
-  //     this.setState({userId: obj.userId});
-  //   });
-  //
-  //   this.socket.on('initMessages', (allMsg) => {
-  //     console.log('Initial messages received: ' + allMsg);
-  //     allMsg.map((msg) => {
-  //       this.addMessage(msg);
-  //     });
-  //   });
-  //
-  //   this.socket.on('newMessage', (msg) => {
-  //     this.addMessage(msg);
-  //   });
-  // }
+  componentDidMount() {
+    this.socket = io('http://10.0.2.2:3000', {jsonp: false});
+    this.socket.on('connect', () => {
+      this.socket.emit('initial', {position: this.props.position, avatar: this.props.avatar});
+    });
+
+    this.socket.on("userId", (obj) => {
+      console.log("User Id assigned: " + obj.userId);
+      this.setState({userId: obj.userId});
+    });
+
+    this.socket.on('initMessages', (allMsg) => {
+      console.log('Initial messages received: ' + allMsg);
+      allMsg.map((msg) => {
+        this.addMessage(msg);
+      });
+    });
+
+    this.socket.on('newMessage', (msg) => {
+      this.addMessage(msg);
+    });
+  }
 
   addMessage = (msg) => {
     console.log('New message received: ');
@@ -165,6 +167,7 @@ export default class Chat extends Component<Props> {
               }}
               scrollEnabled={true}
               contentContainerStyle={styles.chatFieldScroll}>
+              <TwitterLocal />
               {this.state.messagesDOM}
             </ScrollView>
           </View>
@@ -219,8 +222,8 @@ const styles = {
       alignItems: 'center'
     },
       loadingGif: {
-        height: 70,
-        width: 70
+        height: 50,
+        width: 50
       },
     msgCont: {
       flexDirection: 'row',
