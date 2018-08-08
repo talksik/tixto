@@ -15,7 +15,8 @@ import {
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const loadingGIF = 'http://www.playrosy.com/ourgames/vampiregirlmakeover/images/_preloader.gif';
+
+const loadingGIF = '../assets/images/loading.gif';
 
 type Props = {};
 export default class Loading extends Component<Props> {
@@ -55,8 +56,10 @@ export default class Loading extends Component<Props> {
   render() {
     return (
       <View style={loadingStyles.container}>
-        <Image style={loadingStyles.gif} source={{ uri: null }} />
+        <Image style={loadingStyles.gif} source={require(loadingGIF)} />
+
         <Text style={loadingStyles.waitTxt}>Please wait to be connected...</Text>
+
         <View style={loadingStyles.copyright}>
           <Text style={loadingStyles.copyTxt}>&copy; Nexto</Text>
         </View>
@@ -75,7 +78,8 @@ const loadingStyles = {
   },
   gif: {
     height: 50,
-    width: 50
+    width: 50,
+    zIndex: 10
   },
   waitTxt: {
     color: 'white',

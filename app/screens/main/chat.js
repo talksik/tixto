@@ -27,6 +27,8 @@ const io = require('socket.io-client/dist/socket.io');
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
+const loadingGIF = '../../assets/images/loadingChat.gif';
+
 type Props = {};
 export default class Chat extends Component<Props> {
   constructor(props) {
@@ -46,28 +48,28 @@ export default class Chat extends Component<Props> {
     console.log(props);
   }
 
-  componentDidMount() {
-    this.socket = io('http://10.0.2.2:3000', {jsonp: false});
-    this.socket.on('connect', () => {
-      this.socket.emit('initial', {position: this.props.position, avatar: this.props.avatar});
-    });
-
-    this.socket.on("userId", (obj) => {
-      console.log("User Id assigned: " + obj.userId);
-      this.setState({userId: obj.userId});
-    });
-
-    this.socket.on('initMessages', (allMsg) => {
-      console.log('Initial messages received: ' + allMsg);
-      allMsg.map((msg) => {
-        this.addMessage(msg);
-      });
-    });
-
-    this.socket.on('newMessage', (msg) => {
-      this.addMessage(msg);
-    });
-  }
+  // componentDidMount() {
+  //   this.socket = io('http://10.0.2.2:3000', {jsonp: false});
+  //   this.socket.on('connect', () => {
+  //     this.socket.emit('initial', {position: this.props.position, avatar: this.props.avatar});
+  //   });
+  //
+  //   this.socket.on("userId", (obj) => {
+  //     console.log("User Id assigned: " + obj.userId);
+  //     this.setState({userId: obj.userId});
+  //   });
+  //
+  //   this.socket.on('initMessages', (allMsg) => {
+  //     console.log('Initial messages received: ' + allMsg);
+  //     allMsg.map((msg) => {
+  //       this.addMessage(msg);
+  //     });
+  //   });
+  //
+  //   this.socket.on('newMessage', (msg) => {
+  //     this.addMessage(msg);
+  //   });
+  // }
 
   addMessage = (msg) => {
     console.log('New message received: ');
@@ -150,9 +152,8 @@ export default class Chat extends Component<Props> {
 
         {this.state.messagesDOM.length == 0 ?
           (<View style={styles.chatFieldEmpty}>
-            <View style={styles.emptyMsg}>
-              <Text>No one's talkin around you! Start it up!</Text>
-            </View>
+            <Image style={styles.loadingGif} source={require(loadingGIF)} />
+            <Text>Loading the conversation around you!</Text>
           </View>)
           :
           (
@@ -217,6 +218,10 @@ const styles = {
       justifyContent: 'center',
       alignItems: 'center'
     },
+      loadingGif: {
+        height: 70,
+        width: 70
+      },
     msgCont: {
       flexDirection: 'row',
       alignSelf: 'stretch',
@@ -299,7 +304,7 @@ const styles = {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderLeftColor: '#0e8f9e',
+    borderLeftColor: '#c7c9cc',
     borderLeftWidth: 1
   },
     sendIcon: {

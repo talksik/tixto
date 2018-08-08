@@ -40,7 +40,11 @@ export default class Navbar extends Component<Props> {
 
         <View style={styles.headerTxt}>
           <Text style={styles.head}>Chat</Text>
-          <Text style={styles.status}>online</Text>
+
+          <View style={styles.statusCont}>
+            <Icon style={styles.statusIcon} name='check-circle' />
+            <Text style={styles.statusTxt}>online</Text>
+          </View>
         </View>
 
         <View style={styles.iconCont}>
@@ -77,11 +81,18 @@ const styles = {
     color: 'white',
     fontFamily: Fonts.Sunflower
   },
-  status: {
-    fontSize: 13,
-    color: 'white',
-    fontFamily: Fonts.Sunflower
+  statusCont: {
+    flexDirection: 'row'
   },
+    statusIcon: {
+      color: 'green',
+      marginRight: 5
+    },
+    statusTxt: {
+      fontSize: 13,
+      color: 'white',
+      fontFamily: Fonts.Sunflower
+    },
   avatar: {
     height: 30,
     width: 30,

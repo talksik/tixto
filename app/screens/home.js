@@ -9,7 +9,8 @@ import {
   Text,
   TouchableOpacity,
   Permissions,
-  AsyncStorage
+  AsyncStorage,
+  Image
 } from 'react-native';
 import {
   Actions
@@ -18,7 +19,9 @@ import { Fonts } from '../utils/Fonts.js';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const backgroundLink = '../assets/images/homeBg.jpg';
+
+const backgroundLink = '../assets/images/mainBg.jpg';
+const logoLink = '../assets/images/logo.png';
 
 type Props = {};
 export default class Home extends Component<Props> {
@@ -31,8 +34,7 @@ export default class Home extends Component<Props> {
       <View style={homeStyles.container}>
         <ImageBackground style={homeStyles.bg} source={require(backgroundLink)} >
         <View>
-          <Text style={homeStyles.logo}>Nexto</Text>
-          <Text style={homeStyles.motto}>spontaneous connection</Text>
+          <Image style={homeStyles.logo} source={require(logoLink)} />
         </View>
 
         <TouchableOpacity style={homeStyles.connect} onPress={this.connect.bind(this)}>
@@ -58,26 +60,22 @@ const homeStyles = {
     height: windowHeight
   },
   logo: {
-    color: 'grey',
-    fontSize: 50,
-    textAlign: 'center',
-    zIndex: 100,
-    fontFamily: Fonts.Sunflower
-  },
-  motto: {
-    color: '#0e8f9e',
-    fontSize: 18,
-    fontFamily: Fonts.Sunflower
+    zIndex: 2,
+    height: 350,
+    width: 350,
+    padding: 0
   },
   connect: {
-    backgroundColor: '#0e8f9e',
     padding: 15,
     width: windowWidth - 100,
     justifyContent: 'flex-end',
+    borderColor: 'black',
+    borderWidth: 2,
+    borderRadius: 5
   },
   connectTxt: {
     textAlign: 'center',
-    color: 'white',
+    color: 'black',
     fontSize: 25
   }
 }
