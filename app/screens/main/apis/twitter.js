@@ -14,7 +14,7 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 type Props = {};
-export default class TwitterLocal extends Component<Props> {
+export default class TwitterPost extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
@@ -23,7 +23,11 @@ export default class TwitterLocal extends Component<Props> {
           style={styles.icon}
         />
         <Text style={styles.bodyTxt}>'this is the content of the tweet body longer than ever....Donal TRump you genius marketer awesome man!!!!!!!!!!!!!!!!asdfasdfsdfsd'</Text>
-        <Text style={styles.screenNameTxt}>@Arjun Patel</Text>
+
+        <View style={styles.infoCont}>
+          <Text style={styles.typeTxt}>local</Text>
+          <Text style={styles.screenNameTxt}>@Arjun Patel</Text>
+        </View>
       </View>
     );
   }
@@ -31,7 +35,6 @@ export default class TwitterLocal extends Component<Props> {
 
 const styles = {
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
@@ -51,17 +54,30 @@ const styles = {
   icon: {
     borderRadius: 60,
     fontSize: 20,
-    color: 'white'
+    color: 'gold'
   },
   bodyTxt: {
     fontSize: 16,
     color: 'white',
     margin: 5
   },
-  screenNameTxt: {
-    fontSize: 12,
-    color: '#e5e7ea',
-    margin: 5,
-    alignSelf: 'flex-end'
-  }
+  infoCont: {
+    flex: 1,
+    alignSelf: 'stretch',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    margin: 5
+  },
+    typeTxt: {
+      fontSize: 12,
+      color: 'gold',
+      backgroundColor: 'black',
+      borderRadius: 4,
+      padding: 5
+    },
+    screenNameTxt: {
+      fontSize: 12,
+      color: 'gold'
+    }
 }

@@ -21,7 +21,7 @@ require('react-native');
 
 // Socket.io imports
 import './UserAgent';
-import TwitterLocal from './apis/twitter.js';
+import TwitterPost from './apis/twitter.js';
 
 window.navigator.userAgent = "react-native";
 const io = require('socket.io-client/dist/socket.io');
@@ -50,15 +50,48 @@ export default class Chat extends Component<Props> {
     console.log(props);
   }
 
+  storeUserId = async (id) => {
+    try {
+      await AsyncStorage.setItem('userId', id.toString());
+    } catch (error) {
+      // Error saving data
+      console.log(error);
+    }
+  }
+
+  retrieveUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem('userId');
+      var id;
+      if (value !== null) {
+        // We have data!!
+        console.log("Have user id: " + value);
+        this.socket.emit('userId', {user_id: parseInt(value), newUser: false, position: this.props.position, avatar: this.props.avatar});
+        id = parseInt(value);
+      } else {
+        this.socket.emit('userId', {user_id: value, newUser: true, position: this.props.position, avatar: this.props.avatar});
+        this.socket.on('getNewUserId', (result) => {
+          console.log('New id: ' + result.user_id);
+          this.storeUserId(result.user_id);
+          id = result.user_id;
+        });
+      }
+
+      this.setState({
+        userId: id
+      });
+     } catch (error) {
+       // Error retrieving data
+       console.log(error);
+     }
+  }
+
   componentDidMount() {
+    var stored_userId = this.retrieveUserId();
+
     this.socket = io('http://10.0.2.2:3000', {jsonp: false});
     this.socket.on('connect', () => {
       this.socket.emit('initial', {position: this.props.position, avatar: this.props.avatar});
-    });
-
-    this.socket.on("userId", (obj) => {
-      console.log("User Id assigned: " + obj.userId);
-      this.setState({userId: obj.userId});
     });
 
     this.socket.on('initMessages', (allMsg) => {
@@ -74,7 +107,7 @@ export default class Chat extends Component<Props> {
   }
 
   addMessage = (msg) => {
-    console.log('New message received: ');
+    console.log('New message received!');
     var oldDOM = this.state.messagesDOM;
 
     var newMessage = this.createMessage(msg);
@@ -97,7 +130,6 @@ export default class Chat extends Component<Props> {
   }
 
   sendMessage = () => {
-    console.log(this.state.userId);
     console.log('Message to send: ' + this.state.messageToSend);
 
     this.socket.emit('newMessage', {
@@ -155,7 +187,7 @@ export default class Chat extends Component<Props> {
         {this.state.messagesDOM.length == 0 ?
           (<View style={styles.chatFieldEmpty}>
             <Image style={styles.loadingGif} source={require(loadingGIF)} />
-            <Text>Loading the conversation around you!</Text>
+            <Text>No conversation around you! Start it!</Text>
           </View>)
           :
           (
@@ -167,7 +199,7 @@ export default class Chat extends Component<Props> {
               }}
               scrollEnabled={true}
               contentContainerStyle={styles.chatFieldScroll}>
-              <TwitterLocal />
+              <TwitterPost />
               {this.state.messagesDOM}
             </ScrollView>
           </View>
