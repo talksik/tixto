@@ -7,7 +7,8 @@ import {
   Dimensions,
   View,
   Text,
-  DrawerLayoutAndroid
+  DrawerLayoutAndroid,
+  AsyncStorage
 } from 'react-native';
 import {
   Actions
@@ -32,14 +33,43 @@ export default class Main extends Component<Props> {
   constructor(props) {
     super(props);
 
-    var avatarRandom = Math.floor(Math.random() * allAvatarLinks.length);
-
     this.state = {
       position: {
         long: props.long,
         lat: props.lat
-      },
-      avatar: avatarRandom
+      }
+    }
+  }
+
+  componentWillMount() {
+    this.retrieveAvatar();
+  }
+
+  retrieveAvatar = async () => {
+    try {
+      const value = await AsyncStorage.getItem('avatar');
+      if (value !== null) {
+        // We have data!!
+        console.log("Have avatar: " + value);
+      } else {
+        this.storeAvatar(Math.floor(Math.random() * allAvatarLinks.length).toString());
+      }
+
+      this.setState({
+        avatar: parseInt(value)
+      });
+     } catch (error) {
+       // Error retrieving data
+       console.log(error);
+     }
+  }
+
+  storeAvatar = async (link) => {
+    try {
+      await AsyncStorage.setItem('avatar', link);
+    } catch (error) {
+      // Error saving data
+      console.log(error);
     }
   }
 

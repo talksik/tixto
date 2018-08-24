@@ -41,7 +41,7 @@ export default class Chat extends Component<Props> {
       messagesDOM: [],
       prevMessageUser: null,
       userId: null,
-
+      avatar: null
     };
     /**
     *   todo fix AsyncStorage
@@ -50,9 +50,9 @@ export default class Chat extends Component<Props> {
     console.log(props);
   }
 
-  storeUserId = async (id) => {
+  storeUserId = async (location, item) => {
     try {
-      await AsyncStorage.setItem('userId', id.toString());
+      await AsyncStorage.setItem(location, item);
     } catch (error) {
       // Error saving data
       console.log(error);
@@ -72,7 +72,7 @@ export default class Chat extends Component<Props> {
         this.socket.emit('userId', {user_id: value, newUser: true, position: this.props.position, avatar: this.props.avatar});
         this.socket.on('getNewUserId', (result) => {
           console.log('New id: ' + result.user_id);
-          this.storeUserId(result.user_id);
+          this.storeUserId('userId', result.user_id.toString());
           id = result.user_id;
         });
       }
