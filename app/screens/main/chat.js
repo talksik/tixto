@@ -22,6 +22,7 @@ require('react-native');
 // Socket.io imports
 import './UserAgent';
 import TwitterPost from './apis/twitter.js';
+import NewsPost from './apis/news.js';
 
 window.navigator.userAgent = "react-native";
 const io = require('socket.io-client/dist/socket.io');
@@ -50,7 +51,7 @@ export default class Chat extends Component<Props> {
     console.log(props);
   }
 
-  storeUserId = async (location, item) => {
+  storeItem = async (location, item) => {
     try {
       await AsyncStorage.setItem(location, item);
     } catch (error) {
@@ -72,7 +73,7 @@ export default class Chat extends Component<Props> {
         this.socket.emit('userId', {user_id: value, newUser: true, position: this.props.position, avatar: this.props.avatar});
         this.socket.on('getNewUserId', (result) => {
           console.log('New id: ' + result.user_id);
-          this.storeUserId('userId', result.user_id.toString());
+          this.storeItem('userId', result.user_id.toString());
           id = result.user_id;
         });
       }
@@ -101,6 +102,26 @@ export default class Chat extends Component<Props> {
       });
     });
 
+    this.socket.on('initNews', (posts) => {
+      console.log(posts);
+      this.setState({
+        news: posts,
+        postNum: 0
+      }, () => {
+        var welcomeMessage = {
+          id: 0,
+          text: 'Welcome to Nexto! Break the ice by starting a conversation!',
+          user_id: this.state.userId,
+          created: new Date(),
+          long: 0,
+          lat: 0,
+          avatar: this.props.avatar
+        };
+
+        this.addMessage(welcomeMessage);
+      });
+    });
+
     this.socket.on('newMessage', (msg) => {
       this.addMessage(msg);
     });
@@ -109,6 +130,15 @@ export default class Chat extends Component<Props> {
   addMessage = (msg) => {
     console.log('New message received!');
     var oldDOM = this.state.messagesDOM;
+
+    if (oldDOM.length % 5 == 0) {
+      var actualPost = this.state.news[this.state.postNum];
+      var newPost = (
+        <NewsPost key={actualPost.uuid} title={actualPost.title} source={actualPost.thread.site} url={actualPost.url} />
+      );
+
+      oldDOM.push(newPost);
+    }
 
     var newMessage = this.createMessage(msg);
 
@@ -125,7 +155,8 @@ export default class Chat extends Component<Props> {
 
     this.setState({
       messagesDOM: oldDOM,
-      prevMessageUser: msg.user_id
+      prevMessageUser: msg.user_id,
+      postNum: this.state.postNum + 1
     });
   }
 
@@ -146,25 +177,32 @@ export default class Chat extends Component<Props> {
   }
 
   createMessage = (msg) => {
+    console.log(msg.id);
     var isUser = msg.user_id == this.state.userId;
     var contStyle = isUser ? styles.userMsg : styles.otherMsg;
     var txtContStyle = isUser ? styles.userMsgBox : styles.otherMsgBox;
     var txtStyle = isUser ? styles.userTxt : null;
     var avatarLink = msg.avatar;
+
     var avatar = (
       <View>
         <Image style={styles.avatar} source={{uri: avatarLink}} />
       </View>
     );
+
     var avatarAlready = this.state.prevMessageUser == msg.user_id;
     var result = (
       <View key={msg.id}
         style={[contStyle, styles.msgCont, avatarAlready ? styles.avatarAlready : null]}>
+
         {!isUser && !avatarAlready ? avatar : null}
+
         <View style={[txtContStyle, styles.msgTxtCont]}>
           <Text style={[styles.msgText, txtStyle]}>{msg.text}</Text>
         </View>
+
         {isUser && !avatarAlready ? avatar : null}
+
       </View>
     );
     return result;
@@ -199,8 +237,9 @@ export default class Chat extends Component<Props> {
               }}
               scrollEnabled={true}
               contentContainerStyle={styles.chatFieldScroll}>
-              <TwitterPost />
+
               {this.state.messagesDOM}
+
             </ScrollView>
           </View>
           )

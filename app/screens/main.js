@@ -39,9 +39,7 @@ export default class Main extends Component<Props> {
         lat: props.lat
       }
     }
-  }
 
-  componentWillMount() {
     this.retrieveAvatar();
   }
 
@@ -51,22 +49,29 @@ export default class Main extends Component<Props> {
       if (value !== null) {
         // We have data!!
         console.log("Have avatar: " + value);
+
+        this.setState({
+          avatar: parseInt(value)
+        });
       } else {
-        this.storeAvatar(Math.floor(Math.random() * allAvatarLinks.length).toString());
+        var newValue = Math.floor(Math.random() * allAvatarLinks.length);
+        this.storeAvatar(newValue.toString());
+
+        this.setState({
+          avatar: newValue
+        });
       }
 
-      this.setState({
-        avatar: parseInt(value)
-      });
+
      } catch (error) {
        // Error retrieving data
        console.log(error);
      }
   }
 
-  storeAvatar = async (link) => {
+  storeAvatar = async (linkIndex) => {
     try {
-      await AsyncStorage.setItem('avatar', link);
+      await AsyncStorage.setItem('avatar', linkIndex);
     } catch (error) {
       // Error saving data
       console.log(error);
@@ -86,6 +91,8 @@ export default class Main extends Component<Props> {
     this.setState({
       avatar: newAvatar
     });
+
+    this.storeAvatar(newAvatar.toString());
   }
 
   openDrawer = () => {
