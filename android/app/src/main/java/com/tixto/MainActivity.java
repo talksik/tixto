@@ -1,4 +1,4 @@
-package com.nexto;
+package com.tixto;
 
 import com.facebook.react.ReactActivity;
 

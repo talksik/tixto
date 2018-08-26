@@ -1,7 +1,7 @@
 {
-  "name": "Nexto",
-  "displayName": "Nexto",
+  "name": "Tixto",
+  "displayName": "Tixto",
   "android": {
-    "package": "com.nexto.nexto"
+    "package": "com.tixto.tixto"
   }
 }

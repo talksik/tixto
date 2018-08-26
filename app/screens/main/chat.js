@@ -90,7 +90,7 @@ export default class Chat extends Component<Props> {
   componentDidMount() {
     var stored_userId = this.retrieveUserId();
 
-    this.socket = io('http://10.0.2.2:3000', {jsonp: false});
+    this.socket = io('https://murmuring-sierra-86040.herokuapp.com/', {jsonp: false});
     this.socket.on('connect', () => {
       this.socket.emit('initial', {position: this.props.position, avatar: this.props.avatar});
     });
