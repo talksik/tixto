@@ -142,7 +142,7 @@ const styles = {
     position: 'relative'
   },
   navbar: {
-    flex: 2
+    flex: 1
   },
   chat: {
     flex: 15

@@ -39,8 +39,6 @@ export default class Navbar extends Component<Props> {
         </View>
 
         <View style={styles.headerTxt}>
-          <Text style={styles.head}>Chat</Text>
-
           <View style={styles.statusCont}>
             <Icon style={styles.statusIcon} name='check-circle' />
             <Text style={styles.statusTxt}>online</Text>

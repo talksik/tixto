@@ -53,7 +53,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    backgroundColor: '#0e8f9e',
+    backgroundColor: 'black',
     margin: 30,
     padding: 10,
     borderRadius: 5,
@@ -87,7 +87,6 @@ const styles = {
     typeTxt: {
       fontSize: 12,
       color: 'gold',
-      backgroundColor: 'black',
       borderRadius: 4,
       padding: 5
     },

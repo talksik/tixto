@@ -24,6 +24,8 @@ import './UserAgent';
 import TwitterPost from './apis/twitter.js';
 import NewsPost from './apis/news.js';
 
+import WelcomeMsg from './components/welcomemsg.js';
+
 window.navigator.userAgent = "react-native";
 const io = require('socket.io-client/dist/socket.io');
 
@@ -90,7 +92,7 @@ export default class Chat extends Component<Props> {
   componentDidMount() {
     var stored_userId = this.retrieveUserId();
 
-    this.socket = io('https://murmuring-sierra-86040.herokuapp.com/', {jsonp: false});
+    this.socket = io('http://10.0.2.2:3000', {jsonp: false});
     this.socket.on('connect', () => {
       this.socket.emit('initial', {position: this.props.position, avatar: this.props.avatar});
     });
@@ -102,23 +104,20 @@ export default class Chat extends Component<Props> {
       });
     });
 
+    var oldDOM = this.state.messagesDOM;
+
+
+
     this.socket.on('initNews', (posts) => {
       console.log(posts);
+
+      oldDOM.push(
+        <WelcomeMsg key={0} />
+      );
+
       this.setState({
         news: posts,
         postNum: 0
-      }, () => {
-        var welcomeMessage = {
-          id: 0,
-          text: 'Welcome to Nexto! Break the ice by starting a conversation!',
-          user_id: this.state.userId,
-          created: new Date(),
-          long: 0,
-          lat: 0,
-          avatar: this.props.avatar
-        };
-
-        this.addMessage(welcomeMessage);
       });
     });
 
@@ -131,7 +130,9 @@ export default class Chat extends Component<Props> {
     console.log('New message received!');
     var oldDOM = this.state.messagesDOM;
 
-    if (oldDOM.length % 5 == 0) {
+    var newNews = oldDOM.length % 5 == 0;
+
+    if (newNews) {
       var actualPost = this.state.news[this.state.postNum];
       var newPost = (
         <NewsPost key={actualPost.uuid} title={actualPost.title} source={actualPost.thread.site} url={actualPost.url} />
@@ -142,16 +143,28 @@ export default class Chat extends Component<Props> {
 
     var newMessage = this.createMessage(msg);
 
-    if (this.state.prevMessageUser != msg.user_id && this.state.prevMessageUser) {
+    if (this.state.prevMessageUser != msg.user_id && this.state.prevMessageUser || newNews) {
       var dotSeparator = (
         <View key={msg.created} style={styles.separatorCont}>
           <Text>. .</Text>
         </View>
       );
       oldDOM.push(dotSeparator);
+
+      var dateParts = isoFormatDateString.split("-");
+      var jsDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2].substr(0,2));
+
+      var dateUpdate = (
+        <View key={msg.created} style={styles.dateUpdateCont}>
+          <Text style={styles.dateUpdateTxt}>{jsDate}</Text>
+        </View>
+      );
+      oldDOM.push(dateUpdate);
     }
 
     oldDOM.push(newMessage);
+
+
 
     this.setState({
       messagesDOM: oldDOM,
@@ -191,6 +204,7 @@ export default class Chat extends Component<Props> {
     );
 
     var avatarAlready = this.state.prevMessageUser == msg.user_id;
+
     var result = (
       <View key={msg.id}
         style={[contStyle, styles.msgCont, avatarAlready ? styles.avatarAlready : null]}>
@@ -225,7 +239,7 @@ export default class Chat extends Component<Props> {
         {this.state.messagesDOM.length == 0 ?
           (<View style={styles.chatFieldEmpty}>
             <Image style={styles.loadingGif} source={require(loadingGIF)} />
-            <Text>No conversation around you! Start it!</Text>
+            <Text>Looking for conversations going around you!!!</Text>
           </View>)
           :
           (
@@ -387,5 +401,14 @@ const styles = {
     sendIconColor: {
       fontSize: 25,
       color: '#0e8f9e'
+    },
+  dateUpdateCont: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 10
+  },
+    dateUpdateTxt: {
+      fontSize: 12
     }
 }
